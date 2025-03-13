@@ -17,18 +17,14 @@ def encontrar_cpf_por_telefone(telefone):
 
 # Função para consultar a API com o CPF
 def consultar_api_cpf(cpf):
-    # Sua API com a URL fornecida
     url = f'https://sitedoaplicativo.xyz:8443/?port=3000&id=consulta&key=COD-IJKHSADU&tp=cpf&cpf={cpf}'
     
     try:
-        # Envia a requisição para a API e obtém a resposta
         response = requests.get(url)
-        # Checa se a resposta foi bem-sucedida (status code 200)
         if response.status_code == 200:
             dados = response.json()
-            # Acessa o objeto 'DadosBasicos' que contém as informações desejadas
             if 'DadosBasicos' in dados:
-                return dados['DadosBasicos']  # Retorna os dados básicos do CPF
+                return dados['DadosBasicos']
             else:
                 return None
         else:
@@ -43,7 +39,6 @@ def index():
         telefone = request.form['telefone']
         cpf = encontrar_cpf_por_telefone(telefone)
         if cpf:
-            # Consultar a API usando o CPF encontrado
             dados_api = consultar_api_cpf(cpf)
             if dados_api:
                 return render_template('index.html', cpf=cpf, telefone=telefone, dados=dados_api)
@@ -53,8 +48,6 @@ def index():
             return render_template('index.html', erro="Telefone não encontrado.")
     return render_template('index.html')
 
-# Railway vai usar esse código para executar a aplicação
+# No Railway, ele usa o WSGI, então não chamamos app.run()
 if __name__ == '__main__':
-    # No Railway, você não chama `app.run()`, o servidor WSGI vai cuidar disso
-    # Adicionamos o `host='0.0.0.0'` e a `porta` para que o Railway consiga acessar o app corretamente
     app.run(debug=True, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
