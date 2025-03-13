@@ -2,7 +2,6 @@ from flask import Flask, render_template, request
 import os
 import requests
 
-# A inicialização do Flask para rodar no ambiente serverless da Vercel
 app = Flask(__name__, template_folder=os.path.join(os.path.abspath(os.path.dirname(__file__)), 'templates'))
 
 # Função para encontrar o CPF baseado no telefone
@@ -54,10 +53,8 @@ def index():
             return render_template('index.html', erro="Telefone não encontrado.")
     return render_template('index.html')
 
-# Para a Vercel, usamos uma função que exporta o app
-def handler(request):
-    with app.app_context():
-        return app.full_dispatch_request()
-
+# Railway vai usar esse código para executar a aplicação
 if __name__ == '__main__':
-    app.run(debug=True)
+    # No Railway, você não chama `app.run()`, o servidor WSGI vai cuidar disso
+    # Adicionamos o `host='0.0.0.0'` e a `porta` para que o Railway consiga acessar o app corretamente
+    app.run(debug=True, host='0.0.0.0', port=int(os.environ.get("PORT", 5000)))
